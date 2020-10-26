@@ -1,7 +1,8 @@
 # Shinshu Mirai App-contest 2020
 
 ### 大元の変更をローカルに反映
-git pull origin main
+git pull origin main (管理人)  
+git pull true_origin main
 
 作業
 
