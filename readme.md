@@ -25,7 +25,7 @@ githubのwebページに行って，緑の"pull request"ボタンを押す．
 git fetch true_origin
 
 ### ローカルのブランチに移動し，変更を反映させる
-git checkout main
+git checkout main  
 git pull true_origin main
 
 ### 最新になったローカルの main ブランチの内容を リモートの origin の main にも反映しておく
