@@ -30,13 +30,22 @@ class DataManager():
 
 
     def setCSV(self, csv_name):
-        """ setcsv
+        """ setCSV
         csvファイル名をメンバ変数に格納
 
         arg:
             csv_name(string): csvファイル名
         """
         self.csv_name = csv_name
+    
+    def getCSV(self):
+        """ getCSV
+        csvファイルの内容を返す．
+
+        return:
+            self.data_score_list(list([string, float]): csvファイルにある全データ
+        """
+        return self.date_score_list
 
 
     def loadJSON(self):
@@ -80,7 +89,7 @@ class DataManager():
         if os.path.exists(self.csv_name):
             with open(self.csv_name, "r") as f:
                 reader = csv.reader(f)
-                self.date_score_list = [row for row in reader]
+                self.date_score_list = [[row[0], float(row[1])] for row in reader]
             if self.date_score_list is None:
                 self.date_score_list = []
         else:
