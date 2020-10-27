@@ -16,7 +16,7 @@ class DataManager():
         self.json_name = None
         self.csv_name = None
         self.json_data = None
-        self.data_score_list = None #変更点
+        self.date_score_list = None #変更点
 
 
     def setJSON(self, json_name):
@@ -70,7 +70,7 @@ class DataManager():
                 f.close()
                 self.json_data = initial_data
 
-    #変更点　csvを行ごとに読み込む，Noneの場合,空のリストを作成
+    #変更点 csvを行ごとに読み込む，Noneの場合,空のリストを作成
     #ファイルが存在しない場合，空のファイルを作成
     def loadCSV(self):
         """ loadCsv
@@ -78,11 +78,11 @@ class DataManager():
         csvファイルが存在しない場合は，ファイルを作成する．
         """
         if os.path.exists(self.csv_name):
-            with open(csv_name, "r") as f:
+            with open(self.csv_name, "r") as f:
                 reader = csv.reader(f)
-                self.data_score_list = [row for row in reader]
-            if self.data_score_list is None:
-                self.data_score_list = []
+                self.date_score_list = [row for row in reader]
+            if self.date_score_list is None:
+                self.date_score_list = []
         else:
             try:
                 f = open(self.csv_name, "w")
@@ -90,7 +90,7 @@ class DataManager():
                 print("csv-", e)
             else:
                 f.close()
-                self.data_score_list = []
+                self.date_score_list = []
     
 
     def updateDatabase(self, new_data_dict):
@@ -139,7 +139,7 @@ class DataManager():
             f.write(text)
             f.close()
     
-    #変更点　ツイート時間，スコアを1行ごとに追加
+    #変更点 ツイート時間，スコアを1行ごとに追加
     def _updateCSV_(self, new_date, new_score):
         """ _updateCSV_
         既存のcsvファイルに1ツイート分のツイート日時，pnスコアを追加
@@ -148,14 +148,14 @@ class DataManager():
             new_date(string): ツイート日時
             new_score(float): pnスコア
         """
-        self.data_score_list.append([new_date,new_score])
+        self.date_score_list.append([new_date,new_score])
         try:
-            f = open(self.csv_name, "w", newline="")
+            f = open(self.csv_name, "a", newline="")
         except OSError as e:
             print("csv-", e)
         else:
             writer = csv.writer(f)
-            writer.writerows(self.data_score_list)
+            writer.writerow([new_date, new_score])
             f.close()
     
     def getScoreByTime(self, from_, to, mode="day"):
@@ -170,6 +170,9 @@ class DataManager():
                         "time": 時刻
         """
         pass
+
+
+
 
 
 
@@ -203,4 +206,4 @@ if __name__ == "__main__":
     }
     dm.updateDatabase(tmp)
     dm.updateDatabase(tmp2)
-    print(dm.data_score_list)
+    print(dm.date_score_list)

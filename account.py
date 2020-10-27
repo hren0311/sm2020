@@ -1,8 +1,8 @@
-#_cleanseText_の戻り値受け取りから再開
 import tweepy
 import re
-import config
 from datetime import datetime as dt
+
+import config
 
 class Account:
 	def __init__(self, account):

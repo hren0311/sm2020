@@ -4,8 +4,10 @@ import pandas as pd
 import MeCab
 import tweepy
 import re
-import account
+import time
 
+import account
+import dataManager
 
 def loadPnDictionary(filename):
     """ loadPnDictionary
@@ -67,28 +69,56 @@ def pnScore(pn_dict, morpheme_list):
     for morpheme in morpheme_list:
         if pn_dict.get(morpheme) is not None:
             score += pn_dict[morpheme]
-            print(f"{morpheme} : {pn_dict[morpheme]}")
+            #print(f"{morpheme} : {pn_dict[morpheme]}")
         else:
-            print(f"{morpheme} : not in pn_dict")
-
+            #print(f"{morpheme} : not in pn_dict")
+            pass
+    
     return score
  
 
 def main():
     #単語感情極性対応表
-    filename = "./pn_ja.dic"
+    filename = "./data/pn_ja.dic"
     pn_dict = loadPnDictionary(filename)
 
-    suga = account.Account("sugawitter")
-    for id_, timeline in suga.getTimeline(10, 1).items():
+    #dataManager
+    json_name = "./data/data.json"
+    csv_name = "./data/score_list.csv"
+    dm = dataManager.DataManager()
+    dm.setJSON(json_name)
+    dm.setCSV(csv_name)
+    dm.loadJSON()
+    dm.loadCSV()
+    pre_sum_score = 0
+    i = 1
+    
+    suga = account.Account("yousuck2020")
+    for id_, timeline in suga.getTimeline(200, 1).items():
+        print("tweet:", i)
+        i += 1
+
         #print("id: ", id_)
         #print("timeline: ", timeline)
         text = timeline["tweet"]
-        print("tweet:\n", text, "\n")
+        #print("tweet:\n", text, "\n")
         
         morpheme_list = morphological_analyze(text)
         score = pnScore(pn_dict, morpheme_list)
-        print("PN score: ", score)
+        #print("PN score: ", score)
+
+        data = {id_: {
+                      "date": timeline["date"],
+                      "tweet": timeline["tweet"],
+                      "mentions": timeline["mentions"],
+                      "score": score,
+                      "sum_score": score + pre_sum_score,
+                      "high_score_words": []
+                }}
+        pre_sum_score += score
+        dm.updateDatabase(data)
+        time.sleep(0.5)
+
 
 
 
