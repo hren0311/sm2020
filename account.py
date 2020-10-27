@@ -35,20 +35,19 @@ class Account:
 			count(int): 取得するツイート数
 			page(int): 取得するページ数(よくわからない．デフォルトでOKかも)
 		return:
-			simply_timeline(list(tuple(string, string, string)): 
-			(ツイートID，日時，ツイート内容)のリスト
-
+			simply_timeline(dict(dict)): ツイートIDをキーとした辞書型
+				["date"](string): ツイート日時
+				["tweet"](string): ツイート内容
+				["mentions"](list(string)): メンション相手
 		"""
 		timeline = self.api.user_timeline(self.acount, count=count, page=page)
-		ids, dates, texts = [], [], []
+		simply_timeline = {}
 
 		for tweet in timeline:
-			ids.append(tweet.id_str)
+			id_ = tweet.id_str
 			date = self._datetime2ymdhms_(tweet.created_at)
-			dates.append(date)
-			text = self._cleanseText_(tweet.text)
-			texts.append(text)
-		simply_timeline = [(id_, date, text) for id_, date, text in zip(ids, dates, texts)]
+			text, mentions = self._cleanseText_(tweet.text)
+			simply_timeline[id_]={"date": date,  "tweet": text, "mentions": mentions}
 		return simply_timeline
 
 
