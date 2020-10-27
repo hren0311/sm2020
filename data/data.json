@@ -7,21 +7,6 @@
         "sum_score": 0,
         "high_score_words": []
     },
-    "9782365786235": {
-        "date": "20201027_141923",
-        "tweet": "hello, world",
-        "mentions": [
-            "sugawara",
-            "abe"
-        ],
-        "score": 0.897236235,
-        "sum_score": 124.23587532,
-        "high_score_words": [
-            "happy",
-            "friends",
-            "omoroi"
-        ]
-    },
     "123456789": {
         "date": "20201031_141923",
         "tweet": "hello, world",
@@ -35,6 +20,21 @@
             "happy",
             "friends",
             "omoroi"
+        ]
+    },
+    "123456922": {
+        "date": "20201031_141931",
+        "tweet": "hello, world2",
+        "mentions": [
+            "sugawara2",
+            "abe2"
+        ],
+        "score": 2.0,
+        "sum_score": 12.2,
+        "high_score_words": [
+            "hap",
+            "hey",
+            "suki"
         ]
     }
 }

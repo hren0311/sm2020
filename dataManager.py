@@ -16,8 +16,7 @@ class DataManager():
         self.json_name = None
         self.csv_name = None
         self.json_data = None
-        self.date_list = None
-        self.score_list = None
+        self.data_score_list = None #変更点
 
 
     def setJSON(self, json_name):
@@ -71,33 +70,27 @@ class DataManager():
                 f.close()
                 self.json_data = initial_data
 
-
+    #変更点　csvを行ごとに読み込む，Noneの場合,空のリストを作成
+    #ファイルが存在しない場合，空のファイルを作成
     def loadCSV(self):
         """ loadCsv
         csvを読み込み，書き込まれたデータ全てを返す．
-        csvファイルが存在しない場合は，空2行書き込んでファイルを作成する．
+        csvファイルが存在しない場合は，ファイルを作成する．
         """
         if os.path.exists(self.csv_name):
-            date_list = []
-            score_list = []
             with open(csv_name, "r") as f:
-                date_list = f.readline()
-                score_list = f.readline()
-                if len(score_list) != 0:
-                    date_list = date_list.replace("\n", "").split(",")
-                    score_list = list(map(float, score_list.split(",")))
-            self.date_list = date_list
-            self.score_list = score_list
+                reader = csv.reader(f)
+                self.data_score_list = [row for row in reader]
+            if self.data_score_list is None:
+                self.data_score_list = []
         else:
             try:
                 f = open(self.csv_name, "w")
             except OSError as e:
                 print("csv-", e)
             else:
-                f.write("\n")
                 f.close()
-                self.date_list = []
-                self.score_list = []
+                self.data_score_list = []
     
 
     def updateDatabase(self, new_data_dict):
@@ -146,7 +139,7 @@ class DataManager():
             f.write(text)
             f.close()
     
-
+    #変更点　ツイート時間，スコアを1行ごとに追加
     def _updateCSV_(self, new_date, new_score):
         """ _updateCSV_
         既存のcsvファイルに1ツイート分のツイート日時，pnスコアを追加
@@ -155,20 +148,14 @@ class DataManager():
             new_date(string): ツイート日時
             new_score(float): pnスコア
         """
-        if type(self.date_list) is str:
-            #文字列型のときは何もデータがない状態なので，空リストにしておく．
-            self.date_list = []
-            self.score_list = []
-        self.date_list.append(new_date)
-        self.score_list.append(new_score)
+        self.data_score_list.append([new_date,new_score])
         try:
             f = open(self.csv_name, "w", newline="")
         except OSError as e:
             print("csv-", e)
         else:
             writer = csv.writer(f)
-            writer.writerow(self.date_list)
-            writer.writerow(self.score_list)
+            writer.writerows(self.data_score_list)
             f.close()
     
     def getScoreByTime(self, from_, to, mode="day"):
@@ -195,7 +182,6 @@ if __name__ == "__main__":
     dm.setCSV(csv_name)
     dm.loadJSON()
     dm.loadCSV()
-    print(dm.date_list, dm.score_list)
 
     tmp = {"123456789": {
                 "date": "20201031_141923",
@@ -206,5 +192,15 @@ if __name__ == "__main__":
                 "high_score_words": ["happy", "friends", "omoroi"]
                 }
           }
+    tmp2 = {"123456922": {
+        "date": "20201031_141931",
+        "tweet": "hello, world2",
+        "mentions": ["sugawara2", "abe2"],
+        "score": 2.0,
+        "sum_score": 12.2,
+        "high_score_words": ["hap", "hey", "suki"]
+        }
+    }
     dm.updateDatabase(tmp)
-    print(dm.date_list, dm.score_list)
+    dm.updateDatabase(tmp2)
+    print(dm.data_score_list)
