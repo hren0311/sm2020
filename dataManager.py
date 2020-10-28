@@ -16,7 +16,7 @@ class DataManager():
         self.json_name = None
         self.csv_name = None
         self.json_data = None
-        self.date_score_list = None #変更点
+        self.date_score_list = None
 
 
     def setJSON(self, json_name):
@@ -38,6 +38,7 @@ class DataManager():
         """
         self.csv_name = csv_name
     
+
     def getCSV(self):
         """ getCSV
         csvファイルの内容を返す．
@@ -57,7 +58,6 @@ class DataManager():
             json_data = {}
             with codecs.open(self.json_name, "r", "utf-8") as f:
                 json_data = json.load(f)
-            #print("json:", json_data)
             self.json_data = json_data
         else:
             try:
@@ -79,12 +79,11 @@ class DataManager():
                 f.close()
                 self.json_data = initial_data
 
-    #変更点 csvを行ごとに読み込む，Noneの場合,空のリストを作成
-    #ファイルが存在しない場合，空のファイルを作成
+
     def loadCSV(self):
         """ loadCsv
         csvを読み込み，書き込まれたデータ全てを返す．
-        csvファイルが存在しない場合は，ファイルを作成する．
+        csvファイルが存在しない場合は，空ファイルを作成する．
         """
         if os.path.exists(self.csv_name):
             with open(self.csv_name, "r") as f:
@@ -116,6 +115,7 @@ class DataManager():
                 ["sum_score"](float): 累積pnスコア
                 ["high_score_words"](list(string)): 絶対値でスコアの高かった単語3つ（仮）
         """
+        #引数は1ツイート分なので，チェック
         if len(new_data_dict) != 1:
             print("updateJSON error: arg \"new_data_dict\" must be 1 item.")
         #for分だけどnew_tweet_idとnwe_tweet_infoは1つだけ
@@ -148,10 +148,11 @@ class DataManager():
             f.write(text)
             f.close()
     
-    #変更点 ツイート時間，スコアを1行ごとに追加
+
     def _updateCSV_(self, new_date, new_score):
         """ _updateCSV_
         既存のcsvファイルに1ツイート分のツイート日時，pnスコアを追加
+        ツイート時間，スコアを1行ごとに追加
         
         args:
             new_date(string): ツイート日時
@@ -179,9 +180,6 @@ class DataManager():
                         "time": 時刻
         """
         pass
-
-
-
 
 
 

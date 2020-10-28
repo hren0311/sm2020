@@ -5,6 +5,9 @@ from datetime import datetime as dt
 import config
 
 class Account:
+	""" Account class
+	twitterアカウントのオブジェクト．
+	"""
 	def __init__(self, account):
 		"""__init__
 		Twitter API, アカウントの設定
@@ -47,7 +50,9 @@ class Account:
 			id_ = tweet.id_str
 			date = self._datetime2ymdhms_(tweet.created_at)
 			text, mentions = self._cleanseText_(tweet.text)
-			simply_timeline[id_]={"date": date,  "tweet": text, "mentions": mentions}
+			simply_timeline[id_] = {"date": date,
+									"tweet": text,
+									"mentions": mentions}
 		return simply_timeline
 
 
