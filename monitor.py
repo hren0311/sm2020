@@ -8,23 +8,23 @@ import dataSaver
 import analyzer
 
 def waitSetting(setting_name):
+    def getSetting(setting_name):
+        account_id = ""
+        goal = ""
+        with codecs.open(setting_name, "r", "utf-8") as f:
+            account_id = f.readline().replace("\n", "")
+            goal = f.readline().replace("\n", "")
+        if account_id == "" or goal == "":
+            print("Setting Error: Account ID or Goal are not set.")
+        return account_id, goal
+
     while not os.path.exists(setting_name):
         print("waiting setting file created.....")
         time.sleep(1)
     account_id, goal = getSetting(setting_name)
     return account_id, goal
     
-
-def getSetting(setting_name):
-    account_id = ""
-    goal = ""
-    with codecs.open(setting_name, "r", "utf-8") as f:
-        account_id = f.readline().replace("\n", "")
-        goal = f.readline().replace("\n", "")
-    if account_id == "" or goal == "":
-        print("Setting Error: Account ID or Goal are not set.")
-    return account_id, goal
-
+    
 def removeFiles(file_names):
     for file_name in file_names:
         if os.path.exists(file_name):
@@ -72,7 +72,7 @@ def main():
 
     #analyzer オブジェクト
     anlzr = analyzer.Analyzer()
-    anlzr.loadSetting(pn_dict)
+    anlzr.loadPnDict(pn_dict)
 
 
 
@@ -124,11 +124,6 @@ def main():
         
         date_score_list = dm.getCsv()
         ds.updateSubTotalJsons(date_score_list)
-
-
-
-
-
 
 
 
