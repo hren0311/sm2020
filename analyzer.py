@@ -7,22 +7,10 @@ class Analyzer:
     def __init__(self):
         #コンストラクタ
         self.pn_dict = None
-        self.tagger = None
+        self.tagger = MeCab.Tagger()
 
 
-    def loadSetting(self, filename="./data/pn_ja.dic"):
-        """ loadSetting
-        形態素解析モジュールを設定
-        {単語:pnスコア}のdictを読み込む
-
-        arg:
-           filename(string): 辞書ファイルのパス
-        """
-        self.tagger = MeCab.Tagger('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
-        self._loadPnDict_(filename)
-
-
-    def _loadPnDict_(self, filename="./data/pn_ja.dic"):
+    def loadPnDict(self, filename="./data/pn_ja.dic"):
         """ _loadPnDict_
         単語感情極性対応表から{単語:pnスコア}のdictをself.pn_dictに保存
 
