@@ -1,6 +1,8 @@
 import os
 import csv
-import datetime
+import datetime as dt
+import pandas as pd
+import json
 
 import dataManager
 
@@ -20,45 +22,69 @@ def nDaysAgo(today_str, n):
     return n_days_ago_str
 
 
-def make7daysJSON(date_score_list):
+def make7daysJSON(date_score_list, n=7):
     """ make7daysJSON
     直近ツイートから7日分のスコアを記入したjsonファイルを作成する．
 
     arg:
         data_score_list(list([string, float])): score_list.csvのデータ．
                                                 dataManager.date_score_listと同等．
+        n(int): 隠し引数．デフォルトで7日間のデータ取得，n日間に変更可能．
     """
-    #日時の降順に並び変える(一時的)
-    date_score_list.reverse()
+    dates = []
+    sum_scores = []
 
-    #直近ツイートの日時を取得
-    latest = date_score_list[-1][0]
-    
-    #直近ツイートから7日間のスコアの日計
-    week_scores = {}
-    for day in range(7):
-        week_scores[nDaysAgo(latest, day)] = 0
-    over_week_day = nDaysAgo(latest, 7) #7日前=直近ツイート日から7日間が過ぎた日 yyyymmdd
+    #pandasのDataFrameで扱う
+    pdata = pd.DataFrame(date_score_list)
+    pdata.columns = ["date", "score"]
+    pdata["date"] = pd.to_datetime(pdata["date"], format="%Y%m%d_%H%M%S")
 
-    #日時の昇順に並び替え
-    date_score_list.reverse()
-    for date, score in date_score_list:
-        only_date = date.split("_")[0] #yyyymmdd
-        #昇順を想定しているため，7日前以下の日時になった時点で終了
-        if int(only_date) <= int(over_week_day):
-            break
-        week_scores[only_date] += score
-    
-    #日時表記を変換してjsonファイル書き込み
+    #日時に対して昇順にソート
+    pdata = pdata.sort_values("date")
+
+    #今日の現在時刻までのデータ
+    now_dt = dt.datetime.now() #現在日時
+    today_dt = dt.datetime(now_dt.year, now_dt.month, now_dt.day) #今日の0時0分0秒
+    extracted_dates = (today_dt <= pdata["date"]) & (pdata["date"] <= now_dt)
+    day_sum_score = pdata[extracted_dates]["score"].sum()
+    dates.append(today_dt.strftime("%m/%d"))
+    sum_scores.append(day_sum_score)
+
+    #昨日以前
+    day_start_dt = today_dt - dt.timedelta(days=1)
+    day_end_dt = today_dt
+    for i in range(n-1):
+        extracted_dates = (day_start_dt <= pdata["date"]) & (pdata["date"] < day_end_dt)
+        day_sum_score = pdata[extracted_dates]["score"].sum()
+        dates.append(day_start_dt.strftime("%m/%d"))
+        sum_scores.append(day_sum_score)
         
+        day_end_dt = day_start_dt
+        day_start_dt = day_start_dt - dt.timedelta(days=1)
 
-    
+    #json用に辞書型にする
+    dates.reverse()
+    sum_scores.reverse()
+    json_data = {"data": sum_scores, "labels": dates}
+
+    #jsonに書き込む
+    try:
+        f = open(json_name, "w")
+    except OSError as e:
+        print("make7daysJSON-", e)
+    else:
+        text = json.dumps(json_data, indent=4, ensure_ascii=False)
+        f.write(text)
+        f.close()
+
+
 
 if __name__ == "__main__":
     csv_name = "./data/score_list.csv"
+    json_name = "./data/seven_days_scores.json"
     dm = dataManager.DataManager()
     dm.setCSV(csv_name)
     dm.loadCSV()
     date_score_list = dm.getCSV()
 
-    print(make7daysJSON(date_score_list))
+    make7daysJSON(date_score_list)
