@@ -19,8 +19,8 @@ class DataManager():
         self.date_score_list = None
 
 
-    def setJSON(self, json_name):
-        """ setJSON
+    def setJson(self, json_name):
+        """ setJson
         jsonファイル名をメンバ変数に格納
 
         arg:
@@ -29,8 +29,8 @@ class DataManager():
         self.json_name = json_name
 
 
-    def setCSV(self, csv_name):
-        """ setCSV
+    def setCsv(self, csv_name):
+        """ setCsv
         csvファイル名をメンバ変数に格納
 
         arg:
@@ -39,8 +39,8 @@ class DataManager():
         self.csv_name = csv_name
     
 
-    def getCSV(self):
-        """ getCSV
+    def getCsv(self):
+        """ getCsv
         csvファイルの内容を返す．
 
         return:
@@ -49,10 +49,10 @@ class DataManager():
         return self.date_score_list
 
 
-    def loadJSON(self):
-        """ loadJSON
-        JSONを読み込み，書き込まれたデータ全てを返す．
-        JSONファイルが存在しない場合は，初期データを入れてファイルを作成する．
+    def loadJson(self):
+        """ loadJson
+        Jsonを読み込み，書き込まれたデータ全てを返す．
+        Jsonファイルが存在しない場合は，初期データを入れてファイルを作成する．
         """
         if os.path.exists(self.json_name):
             json_data = {}
@@ -80,7 +80,7 @@ class DataManager():
                 self.json_data = initial_data
 
 
-    def loadCSV(self):
+    def loadCsv(self):
         """ loadCsv
         csvを読み込み，書き込まれたデータ全てを返す．
         csvファイルが存在しない場合は，空ファイルを作成する．
@@ -117,7 +117,7 @@ class DataManager():
         """
         #引数は1ツイート分なので，チェック
         if len(new_data_dict) != 1:
-            print("updateJSON error: arg \"new_data_dict\" must be 1 item.")
+            print("updateJson error: arg \"new_data_dict\" must be 1 item.")
         #for分だけどnew_tweet_idとnwe_tweet_infoは1つだけ
         for key, val in new_data_dict.items():
             new_id = key
@@ -126,12 +126,12 @@ class DataManager():
         new_score = new_info["score"]
 
         if new_id not in self.json_data:
-            self._updateJSON_(new_id, new_info)
-            self._updateCSV_(new_date, new_score)
+            self._updateJson_(new_id, new_info)
+            self._updateCsv_(new_date, new_score)
 
 
-    def _updateJSON_(self, new_id, new_info):
-        """ _updateJSON_
+    def _updateJson_(self, new_id, new_info):
+        """ _updateJson_
         既存のjsonファイルに1ツイート分の情報を追加
 
         args:
@@ -149,8 +149,8 @@ class DataManager():
             f.close()
     
 
-    def _updateCSV_(self, new_date, new_score):
-        """ _updateCSV_
+    def _updateCsv_(self, new_date, new_score):
+        """ _updateCsv_
         既存のcsvファイルに1ツイート分のツイート日時，pnスコアを追加
         ツイート時間，スコアを1行ごとに追加
         
@@ -188,10 +188,10 @@ if __name__ == "__main__":
     csv_name = "./data/score_list.csv"
     
     dm = DataManager()
-    dm.setJSON(json_name)
-    dm.setCSV(csv_name)
-    dm.loadJSON()
-    dm.loadCSV()
+    dm.setJson(json_name)
+    dm.setCsv(csv_name)
+    dm.loadJson()
+    dm.loadCsv()
 
     tmp = {"123456789": {
                 "date": "20201031_141923",

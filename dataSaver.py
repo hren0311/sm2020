@@ -16,13 +16,13 @@ class DataSaver:
     
     def updateSubTotalJsons(self, date_score_list, data_num=7):
         sorted_pdata = self._sortDateScoreList_(date_score_list)
-        self._make7tweetsJSON_(sorted_pdata, n=data_num)
-        self._make7daysJSON_(sorted_pdata, n=data_num)
-        self._make7weeksJSON_(sorted_pdata, n=data_num)
+        self._make7tweetsJson_(sorted_pdata, n=data_num)
+        self._make7daysJson_(sorted_pdata, n=data_num)
+        self._make7weeksJson_(sorted_pdata, n=data_num)
     
 
-    def _make7tweetsJSON_(self, sorted_pdata, n=7):
-        """ make7tweetsJSON
+    def _make7tweetsJson_(self, sorted_pdata, n=7):
+        """ make7tweetsJson
         直近ツイートから7ツイートのスコアを記入したjsonファイルを作成する．
 
         arg:
@@ -56,8 +56,8 @@ class DataSaver:
             f.close()
 
     
-    def _make7daysJSON_(self, sorted_pdata, n=7):
-        """ make7daysJSON
+    def _make7daysJson_(self, sorted_pdata, n=7):
+        """ make7daysJson
         直近ツイートから7日分のスコアを記入したjsonファイルを作成する．
 
         arg:
@@ -97,15 +97,15 @@ class DataSaver:
         try:
             f = codecs.open(self.days_json, "w", "utf-8")
         except OSError as e:
-            print("make7daysJSON-", e)
+            print("make7daysJson-", e)
         else:
             text = json.dumps(json_dict, indent=4, ensure_ascii=False)
             f.write(text)
             f.close()
 
 
-    def _make7weeksJSON_(self, sorted_pdata, n=7):
-        """ make7weeksJSON
+    def _make7weeksJson_(self, sorted_pdata, n=7):
+        """ make7weeksJson
         直近ツイートから7日分のスコアを記入したjsonファイルを作成する．
 
         arg:
@@ -172,9 +172,9 @@ if __name__ == "__main__":
 
     import dataManager
     dm = dataManager.DataManager()
-    dm.setCSV(csv_name)
-    dm.loadCSV()
-    date_score_list = dm.getCSV()
+    dm.setCsv(csv_name)
+    dm.loadCsv()
+    date_score_list = dm.getCsv()
 
 
     ds = DataSaver(tweets_name, days_name, weeks_name)

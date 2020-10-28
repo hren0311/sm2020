@@ -83,13 +83,13 @@ class Account:
 		mentions = re.findall(r"@\w+", text)
 		#改行文字の削除
 		text = str(text.replace("\n", ""))
-		#URLの削除
-		text = re.sub(r"(https?|ftp)(:[\/-_\.!~*\'()a-zA-Z0-9;\/?:\@&=\+$,%#…]+)", "" ,text)
 		#リツイート表記の削除
 		text = re.sub(r"RT @\w+:", "" ,text)
 		#文字制限による末尾の「…」の削除
 		if text[-1] == "…":
 			text = text[:-1]
+		#URLの削除
+		text = re.sub(r"(https?|ftp)(:[\/-_\.!~*\'()a-zA-Z0-9;\/?:\@&=\+$,%#…]+)", "" ,text)
 		return text, mentions
 
 
