@@ -2,22 +2,23 @@ import pandas as pd
 import MeCab
 import account 
 
-class NewAnalyze:
+class Analyzer:
 
     def __init__(self):
         #コンストラクタ
         self.pn_dict = None
         self.tagger = None
 
+
     def loadSetting(self, filename="./data/pn_ja.dic"):
         """ loadSetting
-
-        arg:
-           filename(string):辞書ファイルのパス
         形態素解析モジュールを設定
         {単語:pnスコア}のdictを読み込む
+
+        arg:
+           filename(string): 辞書ファイルのパス
         """
-        self.tagger = MeCab.Tagger("")
+        self.tagger = MeCab.Tagger('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
         self._loadPnDict_(filename)
 
 
@@ -27,14 +28,12 @@ class NewAnalyze:
 
         arg:
             filename(string): 単語感情極性対応表のパス
-
         """
         pnja = pd.read_csv(filename,
                         sep=":",
                         encoding="shift-jis",
                         names=("Word", "Read", "Hinshi", "Score"))
         self.pn_dict = dict(zip(pnja["Word"], pnja["Score"]))
-
 
 
     def _morphologicalAnalyze_(self, text):
@@ -76,21 +75,30 @@ class NewAnalyze:
         morpheme_list = self._morphologicalAnalyze_(text)
         for morpheme in morpheme_list:
             if self.pn_dict.get(morpheme) is not None:
-                score += self.pn_dict[morpheme]
+                word_pn_score = self.pn_dict[morpheme]
+
+                if word_pn_score < 0:
+                    word_pn_score = word_pn_score * 0.2
+                else:
+                    word_pn_score = word_pn_score * 1
+                
+                score += word_pn_score
 
         return score
 
 
 def main():
-    suga = account.Account("yousuck2020")
-    ana = NewAnalyze()
+    import sys
+
+    user = account.Account(sys.argv[1])
+    ana = Analyzer()
     ana.loadSetting()
-    for id_, timeline in suga.getTimeline(10, 1).items():
-        print("id", id_,end=" : ")
-
+    for id_, timeline in user.getTimeline(100, 1).items():
         text=timeline["tweet"]
-        
+        print("tweet:\n", text)
         score = ana.textToPnScore(text)
-        print(score)
+        print("score:", score)
 
-main()
+
+if __name__ == "__main__":
+    main()
