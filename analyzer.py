@@ -2,6 +2,8 @@ import pandas as pd
 import MeCab
 from google.cloud import language_v1
 import os
+import json
+import codecs
 
 import account
 
@@ -10,22 +12,40 @@ class Analyzer:
         """コンストラクタ
         """
         self.pn_dict = None
+        self.custom_dict = None
         self.tagger = MeCab.Tagger()
         self.NLclient = language_v1.LanguageServiceClient()
 
 
-    def loadPnDict(self, filename="./data/pn_ja.dic"):
+    def loadPnDict(self, file_name="./data/pn_ja.dic"):
         """ _loadPnDict_
         単語感情極性対応表から{単語:pnスコア}のdictをself.pn_dictに保存
 
         arg:
-            filename(string): 単語感情極性対応表のパス
+            file_name(string): 単語感情極性対応表のパス
         """
-        pnja = pd.read_csv(filename,
+        pnja = pd.read_csv(file_name,
                         sep=":",
                         encoding="shift-jis",
                         names=("Word", "Read", "Hinshi", "Score"))
         self.pn_dict = dict(zip(pnja["Word"], pnja["Score"]))
+
+
+    def loadCustomDict(self, file_name, theme):
+        """ loadCustomDict
+        迷いの設定に合わせた特定のワード辞書を読み込む．
+
+        args:
+            file_name(string): 特定のワード辞書
+            theme(string): 迷い設定
+        """
+        with codecs.open(file_name, "r", "utf-8") as f:
+            json_data = json.load(f)
+        
+        if theme in json_data:
+            self.custom_dict = json_data[theme]
+        else:
+            print("loadCustomDict Error: the theme is not in custom-dict-file.")
 
 
     def _morphologicalAnalyze_(self, text):
@@ -54,8 +74,8 @@ class Analyzer:
         return morpheme_list
 
 
-    def textToPnScore(self, text):
-        """ textToPnScore
+    def pnDictScore(self, text):
+        """ pnDictScore
         1文章のPNを計算．（加算）
 
         args:
@@ -78,8 +98,8 @@ class Analyzer:
 
         return score
 
-    def nlAnalyze(self, text):
-        """ _nlAnalyze_
+    def gcnlScore(self, text):
+        """ gcnlScore
         1文章のPNを計算．（加算）
         
         args:
@@ -97,6 +117,10 @@ class Analyzer:
         
         return score
 
+    def pnWordBias(self, text, a=0.1):
+        pass
+
+
 
 
 def main():
@@ -110,10 +134,10 @@ def main():
         print("tweet:\n", text)
 
         #極性辞書で分析
-        #score = ana.textToPnScore(text)
+        #score = ana.pnDictScore(text)
 
         #Natural Language APIで分析
-        score = ana.nlAnalyze(text)
+        score = ana.gcnlScore(text)
 
         print("score:", score)
 
