@@ -6,6 +6,7 @@ import account
 import dataManager
 import dataSaver
 import analyzer
+import analyzer_nl
 
 def waitSetting(setting_name):
     def getSetting(setting_name):
@@ -43,7 +44,7 @@ def main():
     setting_name = data_dir + "setting.txt"
 
     #変数
-    prev_tweet_num = 100
+    prev_tweet_num = 10
     get_tweet_num_by_time = 3
     sum_score = 0
 
@@ -71,9 +72,12 @@ def main():
     ds = dataSaver.DataSaver(tweet7_json, day7_json, week7_json)
 
     #analyzer オブジェクト
+    #極性辞書で分析
     anlzr = analyzer.Analyzer()
-    anlzr.loadPnDict(pn_dict)
+    #Googleのやつで分析
+    anlzr_nl = analyzer_nl.Analyzer()
 
+    anlzr.loadPnDict(pn_dict)
 
 
     #監視の前にデータを取得しておく
@@ -81,7 +85,8 @@ def main():
         date = tweet_info["date"]
         tweet_text = tweet_info["tweet"]
         mentions = tweet_info["mentions"]
-        score = anlzr.textToPnScore(tweet_text)
+        #score = anlzr.textToPnScore(tweet_text)
+        score = anlzr_nl.nlAnalyze(tweet_text)
         sum_score += score
         high_score_words = []
 
@@ -107,7 +112,13 @@ def main():
             date = tweet_info["date"]
             tweet_text = tweet_info["tweet"]
             mentions = tweet_info["mentions"]
-            score = anlzr.textToPnScore(tweet_text)
+
+            if dm.hasData(tweet_id):
+                print("Attayo!")
+                continue 
+
+            #score = anlzr.textToPnScore(tweet_text)
+            score = anlzr_nl.nlAnalyze(tweet_text)
             sum_score += score
             high_score_words = []
 
