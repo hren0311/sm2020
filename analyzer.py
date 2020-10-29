@@ -1,13 +1,17 @@
 import pandas as pd
 import MeCab
-import account 
+from google.cloud import language_v1
+import os
+
+import account
 
 class Analyzer:
-
     def __init__(self):
-        #コンストラクタ
+        """コンストラクタ
+        """
         self.pn_dict = None
         self.tagger = MeCab.Tagger()
+        self.NLclient = language_v1.LanguageServiceClient()
 
 
     def loadPnDict(self, filename="./data/pn_ja.dic"):
@@ -74,6 +78,26 @@ class Analyzer:
 
         return score
 
+    def nlAnalyze(self, text):
+        """ _nlAnalyze_
+        1文章のPNを計算．（加算）
+        
+        args:
+            text(string): tweet
+        return:
+            score(float): pnスコア
+        """
+        text = str(text)
+        document = language_v1.Document(content=text, type_=language_v1.Document.Type.PLAIN_TEXT)
+        
+        #テキストからPNを分析
+        sentiment = self.NLclient.analyze_sentiment(request={'document': document}).document_sentiment
+        #文章内のPN値の平均を抽出
+        score = sentiment.score
+        
+        return score
+
+
 
 def main():
     import sys
@@ -84,7 +108,13 @@ def main():
     for id_, timeline in user.getTimeline(100, 1).items():
         text=timeline["tweet"]
         print("tweet:\n", text)
-        score = ana.textToPnScore(text)
+
+        #極性辞書で分析
+        #score = ana.textToPnScore(text)
+
+        #Natural Language APIで分析
+        score = ana.nlAnalyze(text)
+
         print("score:", score)
 
 
