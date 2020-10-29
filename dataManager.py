@@ -49,6 +49,8 @@ class DataManager():
         return self.date_score_list
 
 
+
+
     def loadJson(self):
         """ loadJson
         Jsonを読み込み，書き込まれたデータ全てを返す．
@@ -99,6 +101,10 @@ class DataManager():
             else:
                 f.close()
                 self.date_score_list = []
+
+
+    def hasData(self, tweet_id):
+        return tweet_id in self.json_data
     
 
     def updateDatabase(self, new_data_dict):
