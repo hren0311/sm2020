@@ -6,27 +6,48 @@ import account
 import dataManager
 import dataSaver
 import analyzer
-import analyzer_nl
 
 def waitSetting(setting_name):
+    """ waitsetting
+    設定が完了するまで待つ．
+
+    arg:
+        setting_name(string): 設定ファイル名
+    """
     def getSetting(setting_name):
         account_id = ""
         goal = ""
         with codecs.open(setting_name, "r", "utf-8") as f:
-            account_id = f.readline().replace("\n", "")
-            goal = f.readline().replace("\n", "")
+            goal, account_id = f.readline().split(",")
         if account_id == "" or goal == "":
             print("Setting Error: Account ID or Goal are not set.")
         return account_id, goal
 
-    while not os.path.exists(setting_name):
+    while True:
         print("waiting setting file created.....")
         time.sleep(1)
-    account_id, goal = getSetting(setting_name)
+
+        if os.path.exists(setting_name):
+            account_id, goal = getSetting(setting_name)
+            tmp_user = account.Account(account_id)
+            if tmp_user.existsAccount():
+                break
+            else:
+                os.remove(setting_name)
+                time.sleep(2)
+
+    print("setting completed.")
     return account_id, goal
     
     
 def removeFiles(file_names):
+    """ removeFiles
+    データファイル，setting.txtを消去する．
+    （別ユーザのデータが追記されないように）
+
+    arg:
+        file_names(list(string)): 消したいファイルのリスト
+    """
     for file_name in file_names:
         if os.path.exists(file_name):
             os.remove(file_name)
@@ -50,7 +71,8 @@ def main():
 
 
     #データ関係のファイルを消去
-    remove_file_names = [json_name, csv_name, tweet7_json, day7_json, week7_json, setting_name]
+    remove_file_names = [json_name, csv_name, setting_name,
+                         tweet7_json, day7_json, week7_json]
     removeFiles(remove_file_names)
 
 
