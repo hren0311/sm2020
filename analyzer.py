@@ -1,8 +1,9 @@
 import pandas as pd
 import MeCab
-import account
 from google.cloud import language_v1
 import os
+
+import account
 
 class Analyzer:
 
