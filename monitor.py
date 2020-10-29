@@ -72,11 +72,7 @@ def main():
     ds = dataSaver.DataSaver(tweet7_json, day7_json, week7_json)
 
     #analyzer オブジェクト
-    #極性辞書で分析
     anlzr = analyzer.Analyzer()
-    #Googleのやつで分析
-    anlzr_nl = analyzer_nl.Analyzer()
-
     anlzr.loadPnDict(pn_dict)
 
 
@@ -85,8 +81,10 @@ def main():
         date = tweet_info["date"]
         tweet_text = tweet_info["tweet"]
         mentions = tweet_info["mentions"]
-        #score = anlzr.textToPnScore(tweet_text)
-        score = anlzr_nl.nlAnalyze(tweet_text)
+
+        #score = anlzr.pnDictScore(tweet_text)
+        score = anlzr.gcnlScore(tweet_text)
+        
         sum_score += score
         high_score_words = []
 
@@ -117,8 +115,9 @@ def main():
                 print("Attayo!")
                 continue 
 
-            #score = anlzr.textToPnScore(tweet_text)
-            score = anlzr_nl.nlAnalyze(tweet_text)
+            #score = anlzr.pnDictScore(tweet_text)
+            score = anlzr.gcnlScore(tweet_text)
+
             sum_score += score
             high_score_words = []
 
