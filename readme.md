@@ -1,33 +1,17 @@
-# Shinshu Mirai App-contest 2020
+#信州未来アプリコンテスト0 2020
 
-### 大元の変更をローカルに反映
-git pull origin main (管理人)  
-git pull true_origin main
+###monitor.py  
+メインプログラム  
+フロント部からtwitterID，迷いの設定を受け取り，twitterの監視，データの保存，フロントに向けたファイルの生成を行う．
 
-作業
+##account.py  
+twitter API 用クラス  
 
-### 変更を登録
-git add <変更したファイル>
+##dataManager.py  
+データベース管理用クラス  
 
-### 変更をコミット
-git commit -m "変更情報コメント"
+##dataSaver.py
+フロントに向けたファイル生成用クラス
 
-### 変更をプッシュ
-git push origin main
-
-### プルリクエストをする
-githubのwebページに行って，緑の"pull request"ボタンを押す．
-コメントを書いて送信，
-
-### プルリクを承認
-管理人がプルリクを承認することで，大元に変更が反映される，
-
-### ローカルに変更情報を取り込む
-git fetch true_origin
-
-### ローカルのブランチに移動し，変更を反映させる
-git checkout main  
-git pull true_origin main
-
-### 最新になったローカルの main ブランチの内容を リモートの origin の main にも反映しておく
-git push origin main
+##analyzer.py
+ツイートを受け，感情・決意分析を行う解析用クラス
