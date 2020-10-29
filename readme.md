@@ -15,3 +15,6 @@ twitter API 用クラス
 
 ### analyzer.py
 ツイートを受け，感情・決意分析を行う解析用クラス
+
+### config.py
+twitter API のキーやトークンが書かれたファイル
