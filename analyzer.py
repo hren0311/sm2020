@@ -6,9 +6,9 @@ import os
 import account
 
 class Analyzer:
-
     def __init__(self):
-        #コンストラクタ
+        """コンストラクタ
+        """
         self.pn_dict = None
         self.tagger = MeCab.Tagger()
         self.NLclient = language_v1.LanguageServiceClient()
