@@ -134,8 +134,7 @@ def main():
             mentions = tweet_info["mentions"]
 
             if dm.hasData(tweet_id):
-                print("Attayo!")
-                continue 
+                continue
 
             #score = anlzr.pnDictScore(tweet_text)
             score = anlzr.gcnlScore(tweet_text)

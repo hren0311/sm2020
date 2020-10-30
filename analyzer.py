@@ -12,7 +12,8 @@ class Analyzer:
         """コンストラクタ
         """
         self.pn_dict = None
-        self.custom_dict = None
+        self.custom_positive_dict = None
+        self.custom_negative_dict = None
         self.tagger = MeCab.Tagger()
         self.NLclient = language_v1.LanguageServiceClient()
 
@@ -43,10 +44,11 @@ class Analyzer:
             json_data = json.load(f)
         
         if theme in json_data:
-            self.custom_dict = json_data[theme]
+            self.custom_positive_dict = json_data[theme]["positive"]
+            self.custom_negative_dict = json_data[theme]["negative"]
         else:
             print("loadCustomDict Error: the theme is not in custom-dict-file.")
-
+        
 
     def _morphologicalAnalyze_(self, text):
         """morphologicalAnalyze
@@ -98,9 +100,10 @@ class Analyzer:
 
         return score
 
+
     def gcnlScore(self, text):
         """ gcnlScore
-        1文章のPNを計算．（加算）
+        Google Cloud Natural Langageを使って，1文章のPNを計算．（加算）
         
         args:
             text(string): tweet
@@ -117,8 +120,31 @@ class Analyzer:
         
         return score
 
+
     def pnWordBias(self, text, a=0.1):
-        pass
+        """ pnWordBias
+        迷いの設定に合わせた特定のワード辞書を参照し，補正値を計算して返す．
+
+        args:
+            text(string): ツイート内容
+            a(float): 調整用係数
+        return:
+            
+        """
+        positive_word_num = 0
+        negative_wird_num = 0
+        morpheme_list = self._morphologicalAnalyze_(text)
+        for morpheme in morpheme_list:
+            if morpheme in self.custom_positive_dict:
+                positive_word_num += 1
+            elif morpheme in self.custom_negative_dict:
+                negative_wird_num += 1
+        
+        bias = a * (positive_word_num - negative_wird_num)
+        return bias
+
+
+
 
 
 
