@@ -63,6 +63,7 @@ def main():
     week7_json = data_dir + "week7.json"
     pn_dict = data_dir + "pn_ja.dic"
     setting_name = data_dir + "setting.txt"
+    sum_score_file_name = data_dir + "sum_score.txt"
 
     #変数
     prev_tweet_num = 10
@@ -104,7 +105,7 @@ def main():
         tweet_text = tweet_info["tweet"]
         mentions = tweet_info["mentions"]
 
-        #score = anlzr.pnDictScore(tweet_text)
+        score = anlzr.pnDictScore(tweet_text)
         score = anlzr.gcnlScore(tweet_text)
         
         sum_score += score
@@ -123,6 +124,7 @@ def main():
     
     date_score_list = dm.getCsv()
     ds.updateSubTotalJsons(date_score_list)
+    ds.sendSumScore(sum_score_file_name, sum_score)
 
 
     while True:
@@ -136,7 +138,7 @@ def main():
             if dm.hasData(tweet_id):
                 continue
 
-            #score = anlzr.pnDictScore(tweet_text)
+            score = anlzr.pnDictScore(tweet_text)
             score = anlzr.gcnlScore(tweet_text)
 
             sum_score += score
@@ -155,6 +157,7 @@ def main():
         
         date_score_list = dm.getCsv()
         ds.updateSubTotalJsons(date_score_list)
+        ds.sendSumScore(sum_score_file_name, sum_score)
 
 
 
