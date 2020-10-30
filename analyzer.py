@@ -137,7 +137,7 @@ class Analyzer:
         for morpheme in morpheme_list:
             if morpheme in self.custom_positive_dict:
                 positive_word_num += 1
-            else morpheme in self.custom_negative_dict:
+            elif morpheme in self.custom_negative_dict:
                 negative_wird_num += 1
         
         bias = a * (positive_word_num - negative_wird_num)
