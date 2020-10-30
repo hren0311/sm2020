@@ -162,6 +162,16 @@ class DataSaver:
         pdata["date"] = pd.to_datetime(pdata["date"], format="%Y%m%d_%H%M%S")
         sorted_pdata = pdata.sort_values("date")
         return sorted_pdata
+    
+
+    def sendSumScore(self, save_file_name, sum_score):
+        try:
+            f = codecs.open(save_file_name, "w", encoding="utf-8")
+        except OSError as e:
+            print("sendSumScore Error")
+        else:
+            f.write(str(sum_score+10))
+    
 
 
 if __name__ == "__main__":

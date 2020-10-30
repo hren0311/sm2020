@@ -1,9 +1,9 @@
 import pandas as pd
 import MeCab
-from google.cloud import language_v1
 import os
 import json
 import codecs
+from google.cloud import language_v1
 
 import account
 
@@ -15,7 +15,7 @@ class Analyzer:
         self.custom_positive_dict = None
         self.custom_negative_dict = None
         self.tagger = MeCab.Tagger()
-        self.NLclient = language_v1.LanguageServiceClient()
+        #self.NLclient = language_v1.LanguageServiceClient()
 
 
     def loadPnDict(self, file_name="./data/pn_ja.dic"):
